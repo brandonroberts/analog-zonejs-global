@@ -11,7 +11,21 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     mainFields: ['module'],
   },
-  plugins: [analog()],
+  plugins: [
+    analog(),
+    {
+      name: 'test',
+      transform(code, id, options) {
+        if (options?.ssr && id.includes('zone-node') && code.includes('const global = globalThis')) {
+          console.log(id);
+          return {
+            code: code.replace('const global = globalThis;', '')
+          }
+        }
+          return;
+      },
+    }
+  ],
   test: {
     globals: true,
     environment: 'jsdom',
